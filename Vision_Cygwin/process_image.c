@@ -55,21 +55,23 @@ int size[2];
 unsigned char proc_img[DIM][DIM];
 {
     printf("Size[0]: %d\n", size[0]);
-    printf("Size[1]: %d\n", size[1]);
-    // ----------------------------------------type casting int to float-----------------
-    // type cast templates to float 
-    for(int i=0; i<3; i++){
-        for(int j=0; j<3; j++){
-            f_vtemplate[i][j]=((float)vtemplate[i][j])/9;
-            f_htemplate[i][j]=((float)htemplate[i][j])/9;
-        }
-    }
-    
+    printf("Size[1]: %d\n", size[1]);    
     // ----------------------------------------type casting char to float------------------
         // float f_image[DIM][DIM];   
         for (int i = 0; i < size[0]; i++) {
         for (int j = 0; j < size[1]; j++) {
             f_image[i][j]=(float)image[i][j];
+        }
+    }
+
+    // since the image array received from image is in the form image[m][n] instead of image[n][m]
+    // transpose the template to templates to match template components to corresponding elements in image array for normalization
+    // ----------------------------------------type casting int to float-----------------
+    // type cast templates to float 
+    for(int i=0; i<3; i++){
+        for(int j=0; j<3; j++){
+            f_vtemplate[i][j]=((float)vtemplate[j][i])/9;
+            f_htemplate[i][j]=((float)htemplate[j][i])/9;
         }
     }
 
@@ -172,4 +174,3 @@ unsigned char proc_img[DIM][DIM];
     }
 
 }
-
