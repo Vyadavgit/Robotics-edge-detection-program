@@ -64,14 +64,12 @@ unsigned char proc_img[DIM][DIM];
         }
     }
 
-    // since the image array received from image is in the form image[m][n] instead of image[n][m]
-    // transpose the template to templates to match template components to corresponding elements in image array for normalization
     // ----------------------------------------type casting int to float-----------------
     // type cast templates to float 
     for(int i=0; i<3; i++){
         for(int j=0; j<3; j++){
-            f_vtemplate[i][j]=((float)vtemplate[j][i])/9;
-            f_htemplate[i][j]=((float)htemplate[j][i])/9;
+            f_vtemplate[i][j]=((float)vtemplate[i][j])/9;
+            f_htemplate[i][j]=((float)htemplate[i][j])/9;
         }
     }
 
@@ -90,16 +88,19 @@ unsigned char proc_img[DIM][DIM];
     // compute convolution:and normalize h(x,y) = Σ(i=-k to k)Σ(j=-l to l) ((image(x+i,y+j)-imgavg)*(template(i+k,j+l)-templateavg))
     // iterate through all locations of image where template can be placed and fill the remaining locations with neighbour's value
     // the template can be placed to (m-(k-1))*(n-(l-1)) locations for [m x n-image & k x l-template]
-    for(int x=1; x<=(size[0]-(k-1)); x++){
-        for(int y=1; y<=(size[1]-(l-1)); y++){
+    // for this assignment, the template can be placed to (m-(l-1))*(n-(k-1)) locations for [n x m-image & k x l-template]
+    for(int x=1; x<=(size[0]-(l-1)); x++){ // (m-(l-1)) i.e (m,n) = (x,y) coordinates apparantly
+        for(int y=1; y<=(size[1]-(k-1)); y++){ // (n-(k-1)) i.e (m,n) = (x,y) coordinates apparantly
             h_image[x][y]=0;
             // iterate through all rows and cols of template region and sum them up
             // here convolution is k*l expensive
-            for (int i=-k; i<=k; i++){
-                for(int j=-l; j<=l; j++){
-                    // h_image[x][y] = (f_image[x+i][y+j]-avg_f_image)*f_htemplate[i+k][j+l] + h_image[x][y];
-                    // h(x,y) = Σ(i=-k to k)Σ(j=-l to l) ((image(x+i,y+j)-iavg)*template(i+k,j+l))
-                    h_image[x][y] = (f_image[x+i][y+j]-avg_f_image)*f_vtemplate[i+k][j+l] + h_image[x][y];
+            for (int i=-l; i<=l; i++){
+                for(int j=-k; j<=k; j++){
+                    // h(x,y) = Σ(i=-k to k)Σ(j=-l to l) ((image(x+i,y+j)-iavg)*template(i+k,j+l)) // this function works when the image_array's (rows,cols) = (Y-components,X-components) i.e (m,n)
+
+                    // the image received for this assignment has the form: the image_array's (rows,cols) = (X-components,Y-components) i.e (m,n)
+                    h_image[x][y] = (f_image[x+i][y+j]-avg_f_image)*f_htemplate[j+k][i+l] + h_image[x][y]; // hence, in this case this function works
+                    // h_image[x][y] = (f_image[x+i][y+j]-avg_f_image)*f_vtemplate[j+k][i+l] + h_image[x][y]; // hence, in this case this function works
                 }
             }
         }
