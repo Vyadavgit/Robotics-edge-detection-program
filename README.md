@@ -1,6 +1,6 @@
 # Robotics-edge-detection-program
 
-Instructions: 
+### Instructions: <br>
 Load image: click "load" and type "pictures/IMAGENAME.lpr" <br>
 Process image: click "process" to see the image result.<br><br>
 
